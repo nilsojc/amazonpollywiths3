@@ -135,17 +135,25 @@ Once finished with the code configuration for the lambda function, it's time to 
 
 ![image](/assets/image11.png)
 
-We will click on 'test' and configure an event for the function, as well as provide a name and text of your choosing in the even JSON
+We will click on 'test' and configure an event for the function, as well as provide a name and text of your choosing in the event JSON.
 
 ![image](/assets/image12.png)
 
+After saving the JSON file and testing the function, the code we created will run.
+
+![image](/assets/image13.png)
+
+Finally, the audio file will be output to our S3 bucket!
+
+![image](/assets/image14.png)
+
+Here is the sample file that was created from the project:
+
+https://github.com/user-attachments/assets/d267821a-9fb4-4ad6-9e7b-0c29577439de
 
 
-
-
-   
  ---
 
 <h2>Conclusion</h2>
-This project made use of an image label generator by calling boto3 API into images uploaded with a S3 bucket combined with Amazon Rekognition. With this feature, you can identify individual parts of an object along with it's closest (defined by confident percentage) label definition. Alternatively, this tool can be used for Labels on Video Streams (Amazon Kinesis) or generated frame by frame with a gif file. 
-☁️
+This project demonstrates the power of AWS Polly in creating lifelike text-to-speech experiences. By leveraging Amazon S3 for storage and AWS Lambda for automation, it ensures a seamless and scalable solution. Whether you're converting books, articles, or newsletters, this tool can bring your text to life.
+
