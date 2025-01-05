@@ -129,7 +129,21 @@ The complete function code will look like this:
 
 
 3. **Test the Result**
-    
+
+
+Once finished with the code configuration for the lambda function, it's time to test the function by creating a test event.
+
+![image](/assets/image11.png)
+
+We will click on 'test' and configure an event for the function, as well as provide a name and text of your choosing in the even JSON
+
+![image](/assets/image12.png)
+
+
+
+
+
+   
  ---
 
 <h2>Conclusion</h2>
