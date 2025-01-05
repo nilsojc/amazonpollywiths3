@@ -15,6 +15,7 @@ In this project, I  developed a text narrator using Amazon Polly. A piece of tex
   - Amazon Polly
   - AWS Lambda
   - IAM (for managing user permissions)
+  - Node.js
 
   
 <h2>Amazon Polly Overview</h2>  
@@ -67,75 +68,67 @@ Both code sources will be able to be edited without problems.
 
 We will then rename the file to index.js.
 
-Next, we will write the code necessary for lambda to execute its function. We will connect AWS SDK with Amazon Polly (Converting Text-to-speech) and S3 (for storing files)
+Next, we will write the code necessary for lambda to execute its function in the `index.js` file.
+
+We start by connecting AWS SDK with Amazon Polly (Converting Text-to-speech) and S3 (for storing files)
 
 `const AWS = require('aws-sdk');
 const polly = new AWS.Polly();
 const s3 = new AWS.S3();`
 
-Then, 8. We're writing a function that AWS will run for us whenever something happens. It's like a little program that waits for a signal to start working.
+Then, We will be writing a function that AWS will run whenever an action happens. 
 
-javascript
-exports.handler = async (event) => {
-9. When the function gets a message with some text, we're going to make it into speech. We decide how the speech will sound and what format it should be in 
+`exports.handler = async (event) => {`
 
-javascript
-const text = event.text;
+We will also assign a function to the text so that it converts into speech along with the voice recipient. We will decide how the speech will result in along with the format.
 
-const params = {
-    Text: text,
+`const text = event.text;`
+
+`const params = {`
+
+   `Text: text,
     OutputFormat: 'mp3',
     VoiceId: 'Joanna' // You can change this to the desired voice
-};
-10. We send the text to Polly and ask it to turn it into speech. Polly does its magic and gives us back the speech as data.
+};`
 
-11. We then save this speech in our S3 storage.
+We send the text to Polly and ask it to turn it into speech. Polly does its magic and gives us back the speech as data.
 
-javascript
-const data = await polly.synthesizeSpeech(params).promise();
+`const data = await polly.synthesizeSpeech(params).promise();`
 
-const key = `audio-${Date.now()}.mp3`;
+`const key = audio-${Date.now()}.mp3;`
 
-const s3Params = {
-    Bucket: 'your-bucket-name', // Replace with your S3 bucket name
+`const s3Params = {`
+    `Bucket: 'your-bucket-name', // Replace with your S3 bucket name
     Key: key,
     Body: data.AudioStream,
-    ContentType: 'audio/mpeg'
-};
+    ContentType: 'audio/mpeg'`
+`};`
 
-await s3.upload(s3Params).promise();
-12. We make a message saying the speech has been saved successfully with its special name in our storage. If something goes wrong, there is an error message.
+`await s3.upload(s3Params).promise();`
 
-javascript
-const outputMessage = `The audio file has been successfully stored in the S3 bucket by the name ${key}`;
+Finally, we create an output message saying that the speech has been saved successfully with it's name in our S3 bucket. If something is not right, it will display an error message. 
 
-return {
+`const outputMessage = The audio file has been successfully stored in the S3 bucket by the name ${key}`;
+
+`return {
     statusCode: 200,
-    body: JSON.stringify({ message: outputMessage })
-};
+    body: JSON.stringify({ message: outputMessage })`
+`};`
 
-} catch (error) {
+`} catch (error) {
     console.error('Error:', error);
     return {
         statusCode: 500,
         body: JSON.stringify({ message: 'Internal server error' })
-    };
----
+    };`
+`}`
 
-3. **Importing Libraries from Python**
- 
+The complete function code will look like this:
 
-
-5. **Define Functions**
+![image](/assets/image10.png)
 
 
-
-6. **Final code with results**
-
-
-**(Optional) Side Project**
-
-
+3. **Test the Result**
     
  ---
 
