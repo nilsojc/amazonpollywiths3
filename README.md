@@ -67,6 +67,59 @@ Both code sources will be able to be edited without problems.
 
 We will then rename the file to index.js.
 
+Next, we will write the code necessary for lambda to execute its function. We will connect AWS SDK with Amazon Polly (Converting Text-to-speech) and S3 (for storing files)
+
+`const AWS = require('aws-sdk');
+const polly = new AWS.Polly();
+const s3 = new AWS.S3();`
+
+Then, 8. We're writing a function that AWS will run for us whenever something happens. It's like a little program that waits for a signal to start working.
+
+javascript
+exports.handler = async (event) => {
+9. When the function gets a message with some text, we're going to make it into speech. We decide how the speech will sound and what format it should be in 
+
+javascript
+const text = event.text;
+
+const params = {
+    Text: text,
+    OutputFormat: 'mp3',
+    VoiceId: 'Joanna' // You can change this to the desired voice
+};
+10. We send the text to Polly and ask it to turn it into speech. Polly does its magic and gives us back the speech as data.
+
+11. We then save this speech in our S3 storage.
+
+javascript
+const data = await polly.synthesizeSpeech(params).promise();
+
+const key = `audio-${Date.now()}.mp3`;
+
+const s3Params = {
+    Bucket: 'your-bucket-name', // Replace with your S3 bucket name
+    Key: key,
+    Body: data.AudioStream,
+    ContentType: 'audio/mpeg'
+};
+
+await s3.upload(s3Params).promise();
+12. We make a message saying the speech has been saved successfully with its special name in our storage. If something goes wrong, there is an error message.
+
+javascript
+const outputMessage = `The audio file has been successfully stored in the S3 bucket by the name ${key}`;
+
+return {
+    statusCode: 200,
+    body: JSON.stringify({ message: outputMessage })
+};
+
+} catch (error) {
+    console.error('Error:', error);
+    return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Internal server error' })
+    };
 ---
 
 3. **Importing Libraries from Python**
