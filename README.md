@@ -42,18 +42,22 @@ In this step, we will create the lambda function for the translator both ways: A
 
 for the CLI, we will utilize the cloudshell. In the CLI example, we will create an placeholder/empty .zip file in order to create a function. Code can be modified later without issue. 
 
+```
 `aws s3 cp empty.zip s3://amazonpollynilso/` 
+```
 
 ![image](/assets/image5.png)
 
 Then, we proceed with creating the lambda function. With this command, we will define the role, name of the function and runtime, along with pointing the dummy file for later use.
 
-`aws lambda create-function \
+```
+aws lambda create-function \
     --function-name TTSTranslatorfunction \
     --runtime nodejs16.x \
     --role arn:aws:iam::137068224350:role/LambdaFunction \
     --handler index.handler \
     --code S3Bucket=amazonpollynilso,S3Key=empty.zip`
+```
 
 ![image](/assets/image6.png)
 
@@ -72,16 +76,21 @@ Next, we will write the code necessary for lambda to execute its function in the
 
 We start by connecting AWS SDK with Amazon Polly (Converting Text-to-speech) and S3 (for storing files)
 
-`const AWS = require('aws-sdk');
+```
+const AWS = require('aws-sdk');
 const polly = new AWS.Polly();
 const s3 = new AWS.S3();`
+```
 
 Then, We will be writing a function that AWS will run whenever an action happens. 
 
+```
 `exports.handler = async (event) => {`
+```
 
 We will also assign a function to the text so that it converts into speech along with the voice recipient. We will decide how the speech will result in along with the format.
 
+```
 `const text = event.text;`
 
 `const params = {`
@@ -90,9 +99,10 @@ We will also assign a function to the text so that it converts into speech along
     OutputFormat: 'mp3',
     VoiceId: 'Joanna' // You can change this to the desired voice
 };`
+```
 
 We send the text to Polly and ask it to turn it into speech. Polly does its magic and gives us back the speech as data.
-
+```
 `const data = await polly.synthesizeSpeech(params).promise();`
 
 `const key = audio-${Date.now()}.mp3;`
@@ -105,9 +115,11 @@ We send the text to Polly and ask it to turn it into speech. Polly does its magi
 `};`
 
 `await s3.upload(s3Params).promise();`
+```
 
 Finally, we create an output message saying that the speech has been saved successfully with it's name in our S3 bucket. If something is not right, it will display an error message. 
 
+```
 `const outputMessage = The audio file has been successfully stored in the S3 bucket by the name ${key}`;
 
 `return {
@@ -122,6 +134,7 @@ Finally, we create an output message saying that the speech has been saved succe
         body: JSON.stringify({ message: 'Internal server error' })
     };`
 `}`
+```
 
 The complete function code will look like this:
 
